@@ -1,3 +1,7 @@
+.front .answer-hide {
+  visibility: hidden;
+}
+
 .card {
  font-family: arial;
  font-size: 20px;
@@ -26,4 +30,3 @@ h1 {
 }
 
 * { -webkit-tap-highlight-color: rgba(0,0,0,0); } 
-
