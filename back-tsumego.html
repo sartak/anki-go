@@ -370,9 +370,27 @@ f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCent
 <script>
 var play1 = new Audio('_go_play_1.wav');
 
+var sgf = document.getElementById("sgf").textContent;
+// fake in Black/White to play, if needed
+var match = sgf.match(/^(.*?)(\(?;[BW]\[.*)$/);
+if (match) {
+    var header = match[1];
+    var rest = match[2];
+
+    if (header.match(/\WC\[/)) { // no need
+    }
+    else { // fake in
+        var player = "Black";
+        if (header.match(/PL\[W\]/)) {
+            player = "White";
+        }
+        sgf = [header, "C[", player, " to play.]", rest].join("");
+    }
+}
+
 glift.create({
   sgf: {
-    sgfString: document.getElementById("sgf").textContent,
+    sgfString: sgf,
 
     // copied from
     // glift.api.widgetopt[glift.enums.widgetTypes.STANDARD_PROBLEM].stoneClick
