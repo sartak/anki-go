@@ -371,6 +371,9 @@ f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCent
 var play1 = new Audio('_go_play_1.wav');
 
 var sgf = document.getElementById("sgf").textContent;
+
+sgf = sgf.replace(/\n/g, ' ');
+
 // fake in Black/White to play, if needed
 var match = sgf.match(/^(.*?)(\(?;[BW]\[.*)$/);
 if (match) {
