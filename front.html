@@ -1,7 +1,10 @@
 <div style="display:none">{{text:SGF}} - must include a template variable to avoid warning</div>
 
 <script type="text/javascript">
-      // need a timeout because of a race condition with answer buttons not showing up
+// automatically flip to the answer side since anki won't "remember"
+// your solution when it renders the answer anew -->
+
+// need a timeout because of a race condition with answer buttons not showing up
       setTimeout(function () {
           // see https://gist.github.com/sartak/581d3564dc42b689b604
           var iframe = document.createElement('IFRAME');

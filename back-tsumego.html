@@ -1,8 +1,13 @@
 <div id="board" style="position: relative; width: 100%; height: 500px" onclick="event.stopPropagation()"  ontouchend="event.stopPropagation()"></div>
+
 <div style="display: none" id="sgf">{{SGF}}</div>
 
 <script>
+// Glift with a one-line hack to fix Anki touch handling on iOS
+// See next <script> tag for loading Glift with the SGF, etc
+
 var ANKI_MISCLICK_XSCALE_FACTOR = 1.015; /* 1.000 */
+
 /*
  Glift: A Responsive Javascript library for the game Go.
 
@@ -373,15 +378,16 @@ var play1 = new Audio('_go_play_1.wav');
 
 var sgf = document.getElementById("sgf").textContent;
 
+// ease parsing
 sgf = sgf.replace(/\n/g, ' ');
 
-// fake in Black/White to play, if needed
+// fake in "Black/White to play" if initial position has no comment
 var match = sgf.match(/^(.*?)(\(?;[BW]\[.*)$/);
 if (match) {
     var header = match[1];
     var rest = match[2];
 
-    if (header.match(/\WC\[/)) { // no need
+    if (header.match(/\WC\[/)) { // already a comment here
     }
     else { // fake in
         var player = "Black";
@@ -399,6 +405,7 @@ glift.create({
     // copied from
     // glift.api.widgetopt[glift.enums.widgetTypes.STANDARD_PROBLEM].stoneClick
     // https://github.com/Kashomon/glift/blob/master/src/api/widgetopt/standard_problem.js
+    // but with added audio playing (outdented code)
     stoneClick: function(event, widget, pt) {
        var hooks = widget.hooks();
        var currentPlayer = widget.controller.getCurrentPlayer();
@@ -428,11 +435,15 @@ play1 = new Audio('_go_play_1.wav');
      },
     widgetType: 'STANDARD_PROBLEM',
     statusBarIcons: [],
+
+    // use a checkmark node to indicate correct answer rather than Glift's
+    // default of parsing the comment for the word "Correct"
     problemConditions: {
         CH: []
     }
   },
   display: {
+    // hide fullscreen button etc
     oneColumnSplits : {
       first: [
         { component: 'BOARD',       ratio: 0.70 },
@@ -452,6 +463,8 @@ play1 = new Audio('_go_play_1.wav');
   },
   display: {
     theme: "DEPTH",
+
+    // http://www.gliftgo.com/images/purty_wood.png
     goBoardBackground: "_goban.png"
   },
   divId: "board"

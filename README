@@ -1,0 +1,40 @@
+couple things to note... in anki, the prompt and the answer sides of a
+card are rendered separately, so I use a trick in front.html for
+automatically advancing to the answer side... without that, you would do
+the problem on the prompt side, then tap outside the board to advance to
+the answer side, but it would reset the problem. so that bit of JS
+avoids the extra tap
+
+there's some cruft in here to make it work a little better with touch
+handling on iOS. YMMV
+
+in particular there's a hack I added to the minified glift js lib (yeah
+yeah) to scale the x-coordinate of the touch. don't even ask. :)
+use the stock glift instead
+
+finally there's some custom JS at the bottom of the file, in a separate
+<script> tag, that does the basic thing of rendering glift from the
+<div>(;sgf…)</div>, but also some additional nice features of adding a
+prompt to the initial position of "Black/White to play" depending on the
+PL[] node in the sgf (but if there's already a comment, it doesn't do
+anything. so you could have "Black to attack the upper right" or
+something). plays an audible stone click for your moves, hides some of
+the unnecessary UI like the fullscreen button
+
+I also made it so glift looks for a CH[] node to mark your answer as
+correct, rather than matching the string "Correct" in a comment
+
+don't hate me for parsing an SGF with a regex, I swear I know better
+
+the other back-*.html cards do things a little bit differently. like
+back-joseki adds a new glift widget type where you play both players in
+the SGF
+
+the back-counting one relies on there being a lot of fields in the card,
+like black captures, komi, etc
+
+known issue: there's no delay between your stone showing up on the board
+and the opponent's response being automatically played. I've gotten used
+to it, but I remember it being a little disorienting at first (and is
+something I'd like to fix, but glift doesn't make it easy.
+https://github.com/Kashomon/glift/issues/11
