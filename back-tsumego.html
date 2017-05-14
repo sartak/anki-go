@@ -374,6 +374,72 @@ problemConditions:{},controllerFunc:glift.controllers.gameViewer,icons:["jump-le
 f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCenteredTempIcon("multiopen-boxonly","check","#0CC"),b.correctness=f.CORRECT,a.problemCorrect&&a.problemCorrect(c,d)):e.problemResult()===f.INCORRECT&&(b.iconBar.destroyTempIcons(),b.iconBar.setCenteredTempIcon("multiopen-boxonly","cross","red"),b.correctness=f.INCORRECT,a.problemIncorrect&&a.problemIncorrect(c,d)))},stoneMouseover:void 0,stoneMouseout:void 0};
 </script>
 <script>
+/* Monkeypatch the parser to vary symmetry and color */
+var VARY_COLOR = true;
+var VARY_COORDS = true;
+
+var swap_color = VARY_COLOR ? Math.random() >= 0.5 : false;
+
+if (swap_color || VARY_COORDS) {
+    var color_swaps = [
+        ['AB', 'AW'],
+        ['B', 'W'],
+        ['GB', 'GW']
+    ];
+
+    var oldParser = glift.parse.sgf;
+    glift.parse.sgf = function (sgfString) {
+        var tree = oldParser(sgfString);
+        var top_props = tree.properties();
+
+        if (swap_color) {
+            var player = top_props.remove('PL');
+            if (!player || player[0] === 'B') {
+                top_props.add('PL', 'W');
+            }
+            else {
+                top_props.add('PL', 'B');
+            }
+        }
+
+        var nodes = [tree.rootNode_];
+        while (nodes.length) {
+            var node = nodes.shift();
+            nodes = nodes.concat(node.children);
+
+            var props = node.properties();
+
+            if (swap_color) {
+                for (var i = 0; i < color_swaps.length; ++i) {
+                    var prop1 = color_swaps[i][0];
+                    var prop2 = color_swaps[i][1];
+                    var val1 = props.remove(prop1);
+                    var val2 = props.remove(prop2);
+                    if (val1) {
+                        props.add(prop2, val1);
+                    }
+                    if (val2) {
+                        props.add(prop1, val2);
+                    }
+                }
+
+                var comment = props.remove('C');
+                if (comment) {
+                    var c = comment[0].replace(/(Black|White)/g, function(color) {
+                         return color === 'Black' ? 'White' : 'Black';
+                    }).replace(/(black|white)/g, function(color) {
+                         return color === 'black' ? 'white' : 'black';
+                    });
+                    props.add('C', c);
+                }
+            }
+        }
+
+        return tree;
+    };
+}
+</script>
+<script>
 var play1 = new Audio('_go_play_1.wav');
 
 var sgf = document.getElementById("sgf").textContent;
