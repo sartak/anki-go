@@ -373,21 +373,44 @@ problemConditions:{},controllerFunc:glift.controllers.gameViewer,icons:["jump-le
 f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCenteredTempIcon("multiopen-boxonly","check","#0CC"),b.correctness=f.CORRECT,a.problemCorrect&&a.problemCorrect(c,d)):e.problemResult()===f.INCORRECT&&(b.iconBar.destroyTempIcons(),b.iconBar.setCenteredTempIcon("multiopen-boxonly","cross","red"),b.correctness=f.INCORRECT,a.problemIncorrect&&a.problemIncorrect(c,d)))},stoneMouseover:void 0,stoneMouseout:void 0};
 </script>
 <script>
+function pickRandomProperty(obj) {
+    var result;
+    var count = 0;
+    for (var prop in obj)
+        if (Math.random() < 1/++count)
+           result = prop;
+    return result;
+}
+
 /* Monkeypatch the parser to vary symmetry and color */
 var VARY_COLOR = true;
 var VARY_COORDS = true;
 
 var swap_color = Math.random() >= 0.5;
+var rotation = pickRandomProperty(glift.enums.rotations);
+var flip_mirror = Math.random() >= 0.5;
 
 if (!VARY_COLOR || document.getElementById("tags").textContent.includes("no-color")) {
     swap_color = false;
 }
 
-if (swap_color || VARY_COORDS) {
+if (!VARY_COORDS || document.getElementById("tags").textContent.includes("no-coords")) {
+    rotation = glift.enums.rotations.NO_ROTATION;
+    flip_mirror = false;
+}
+
+if (swap_color || flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) {
     var color_swaps = [
         ['AB', 'AW'],
         ['B', 'W'],
         ['GB', 'GW']
+    ];
+
+    var coord_swaps = [
+        "AB", "AW", "AE",
+        "B", "W",
+        "TR", "MA", "SQ", "CR",
+        "LB"
     ];
 
     var oldParser = glift.parse.sgf;
@@ -404,6 +427,8 @@ if (swap_color || VARY_COORDS) {
                 top_props.add('PL', 'B');
             }
         }
+
+        var board_size = top_props.getOneValue('SZ');
 
         var nodes = [tree.rootNode_];
         while (nodes.length) {
@@ -436,6 +461,48 @@ if (swap_color || VARY_COORDS) {
                          return color === '黒' ? '白' : '黒';
                     });
                     props.add('C', c);
+                }
+            }
+
+	    if (flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) {
+                for (var i = 0; i < coord_swaps.length; ++i) {
+                    var prop = coord_swaps[i];
+                    var vals = props.remove(prop);
+                    if (vals) {
+                        var newVals = [];
+                        for (var j = 0; j < vals.length; ++j) {
+                            var val = vals[j];
+                            var point;
+                            var value;
+
+                            if (prop == "LB") {
+                                var label = glift.sgf.convertFromLabelData(val);
+                                point = label.point;
+                                value = label.value;
+                            }
+                            else {
+                                point = glift.util.pointFromSgfCoord(val);
+                            }
+
+                            point = point.rotate(board_size, rotation);
+
+                            if (flip_mirror) {
+                                point = glift.util.point(board_size - point.x() - 1, point.y());
+                            }
+
+                            point = point.toSgfCoord();
+
+                            if (prop == "LB") {
+                                val = point + ":" + value;
+                            }
+                            else {
+                                val = point;
+                            }
+
+                            newVals.push(val);
+                        }
+                        props.add(prop, newVals);
+                    }
                 }
             }
         }
