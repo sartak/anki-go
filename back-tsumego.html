@@ -401,9 +401,9 @@ if (!VARY_COORDS || document.getElementById("tags").textContent.includes("no-coo
 
 if (swap_color || flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) {
     var color_swaps = [
-        ['AB', 'AW'],
-        ['B', 'W'],
-        ['GB', 'GW']
+        ["AB", "AW"],
+        ["B", "W"],
+        ["GB", "GW"]
     ];
 
     var coord_swaps = [
@@ -419,16 +419,16 @@ if (swap_color || flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) 
         var top_props = tree.properties();
 
         if (swap_color) {
-            var player = top_props.remove('PL');
-            if (!player || player[0] === 'B') {
-                top_props.add('PL', 'W');
+            var player = top_props.remove("PL");
+            if (!player || player[0] === "B") {
+                top_props.add("PL", "W");
             }
             else {
-                top_props.add('PL', 'B');
+                top_props.add("PL", "B");
             }
         }
 
-        var board_size = top_props.getOneValue('SZ');
+        var board_size = top_props.getOneValue("SZ");
 
         var nodes = [tree.rootNode_];
         while (nodes.length) {
@@ -451,16 +451,16 @@ if (swap_color || flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) 
                     }
                 }
 
-                var comment = props.remove('C');
+                var comment = props.remove("C");
                 if (comment) {
                     var c = comment[0].replace(/(Black|White)/g, function(color) {
-                         return color === 'Black' ? 'White' : 'Black';
+                         return color === "Black" ? "White" : "Black";
                     }).replace(/(black|white)/g, function(color) {
-                         return color === 'black' ? 'white' : 'black';
+                         return color === "black" ? "white" : "black";
                     }).replace(/(黒|白)/g, function(color) {
-                         return color === '黒' ? '白' : '黒';
+                         return color === "黒" ? "白" : "黒";
                     });
-                    props.add('C', c);
+                    props.add("C", c);
                 }
             }
 
@@ -512,12 +512,12 @@ if (swap_color || flip_mirror || rotation != glift.enums.rotations.NO_ROTATION) 
 }
 </script>
 <script>
-var play1 = new Audio('_go_play_1.wav');
+var play1 = new Audio("_go_play_1.wav");
 
 var sgf = document.getElementById("sgf").textContent;
 
 // ease parsing
-sgf = sgf.replace(/\n/g, ' ');
+sgf = sgf.replace(/\n/g, " ");
 
 // fake in "Black/White to play" if initial position has no comment
 var match = sgf.match(/^(.*?)(\(?;[BW]\[.*)$/);
@@ -557,7 +557,7 @@ glift.create({
 
 // play1.currentTime = 0; // doesn't reset correctly
 play1.play();
-play1 = new Audio('_go_play_1.wav');
+play1 = new Audio("_go_play_1.wav");
 
        widget.applyBoardData(flattened);
        if (flattened.problemResult()  === problemResults.CORRECT) {
@@ -571,7 +571,7 @@ play1 = new Audio('_go_play_1.wav');
          hooks.problemIncorrect && hooks.problemIncorrect(pt, currentPlayer);
        }
      },
-    widgetType: 'STANDARD_PROBLEM',
+    widgetType: "STANDARD_PROBLEM",
     statusBarIcons: [],
 
     // use a checkmark node to indicate correct answer rather than Glift's
@@ -584,18 +584,18 @@ play1 = new Audio('_go_play_1.wav');
     // hide fullscreen button etc
     oneColumnSplits : {
       first: [
-        { component: 'BOARD',       ratio: 0.70 },
-        { component: 'COMMENT_BOX', ratio: 0.20 },
-        { component: 'ICONBAR',     ratio: 0.10 }
+        { component: "BOARD",       ratio: 0.70 },
+        { component: "COMMENT_BOX", ratio: 0.20 },
+        { component: "ICONBAR",     ratio: 0.10 }
       ]
     },
     twoColumnSplits: {
       first: [
-        { component: 'BOARD', ratio: 1 }
+        { component: "BOARD", ratio: 1 }
       ],
       second: [
-        { component: 'COMMENT_BOX',   ratio: 0.90 },
-        { component: 'ICONBAR',       ratio: 0.10 }
+        { component: "COMMENT_BOX",   ratio: 0.90 },
+        { component: "ICONBAR",       ratio: 0.10 }
       ]
     }
   },
