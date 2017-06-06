@@ -1,5 +1,6 @@
 <div id="board" style="position: relative; width: 100%; height: 500px" onclick="event.stopPropagation()"  ontouchend="event.stopPropagation()"></div>
 <div style="display: none" id="sgf">{{SGF}}</div>
+<div style="display: none" id="tags">{{Tags}}</div>
 
 <script>
 // Glift with a one-line hack to fix Anki touch handling on iOS
@@ -376,7 +377,11 @@ f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCent
 var VARY_COLOR = true;
 var VARY_COORDS = true;
 
-var swap_color = VARY_COLOR ? Math.random() >= 0.5 : false;
+var swap_color = Math.random() >= 0.5;
+
+if (!VARY_COLOR || document.getElementById("tags").textContent.includes("no-color")) {
+    swap_color = false;
+}
 
 if (swap_color || VARY_COORDS) {
     var color_swaps = [
