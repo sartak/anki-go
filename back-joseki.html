@@ -2,9 +2,13 @@
 {{^Name}}<h1>Unnamed Joseki</h1>{{/Name}}
 <div id="board" style="position: relative; width: 100%; height: 500px" onclick="event.stopPropagation()"  ontouchend="event.stopPropagation()"></div>
 <div style="display: none" id="sgf">{{SGF}}</div>
+<div style="display: none" id="tags">{{Tags}}</div>
 
 <script>
-var ANKI_MISCLICK_XSCALE_FACTOR = 1.015; /* 1.000 */
+// Glift with a one-line hack to fix Anki touch handling on iOS
+// See next <script> tag for loading Glift with the SGF, etc
+var ANKI_MISCLICK_XSCALE_FACTOR = navigator.userAgent.match(/iPad/i) ? 1.015 : 1.000;
+
 /*
  Glift: A Responsive Javascript library for the game Go.
 
@@ -351,7 +355,7 @@ this.currentWidget=void 0;this.temporaryWidget&&this.temporaryWidget.destroy();t
 {component:"ICONBAR",ratio:.1}]};this.previousSgfIcon=a.previousSgfIcon||"chevron-left";this.nextSgfIcon=a.nextSgfIcon||"chevron-right";this.disableZoomForMobile=!!a.disableZoomForMobile||!1;this.enableKeyboardShortcuts=void 0!==a.enableKeyboardShortcuts?!!a.enableKeyboardShortcuts:!0;this.useMarkdown=!!a.useMarkdown||!1};glift.api.HookOptions=function(a){a=a||{};this.getNextSgf=a.getNextSgf||void 0;this.problemCorrect=a.problemCorrect||void 0;this.problemIncorrect=a.problemIncorrect||void 0};glift.api.iconActionDefaults={start:{click:function(a,b,c,d){b.applyBoardData(b.controller.toBeginning())},tooltip:"Go to the beginning"},end:{click:function(a,b,c,d){b.applyBoardData(b.controller.toEnd())},tooltip:"Go to the end"},arrowright:{click:function(a,b,c,d){b.applyBoardData(b.controller.nextMove())},tooltip:"Next move"},arrowleft:{click:function(a,b,c,d){b.applyBoardData(b.controller.prevMove())},tooltip:"Previous move"},"chevron-right":{click:function(a,b,c,d){b.manager.nextSgf()},tooltip:"Next panel"},
 "chevron-left":{click:function(a,b,c,d){b.manager.prevSgf()},tooltip:"Previous panel"},refresh:{click:function(a,b,c,d){b.reload()},tooltip:"Try the problem again"},"undo-problem-move":{click:function(a,b,c,d){b.controller.movetree.node().getNodeNum()<=b.initialMoveNumber||(b.initialPlayerColor===b.controller.getCurrentPlayer()&&b.applyBoardData(b.controller.prevMove()),b.applyBoardData(b.controller.prevMove()),b.initialMoveNumber===b.controller.movetree.node().getNodeNum()?b.reload():(a=glift.enums.problemResults,
 c=b.controller.correctnessStatus(),b.iconBar.destroyTempIcons(),c===a.CORRECT?(b.iconBar.setCenteredTempIcon("multiopen-boxonly","check","#0CC"),b.correctness=a.CORRECT):c===a.INCORRECT&&(b.iconBar.destroyTempIcons(),b.iconBar.setCenteredTempIcon("multiopen-boxonly","cross","red"),b.correctness=a.INCORRECT)))},tooltip:"Undo last move attempt"},undo:{click:function(a,b,c,d){b.manager.returnToOriginalWidget()},tooltip:"Return to the parent widget"},"jump-left-arrow":{click:function(a,b,c,d){b.applyBoardData(b.controller.previousCommentOrBranch(20))},
-tooltip:"Previous branch or comment"},"jump-right-arrow":{click:function(a,b,c,d){b.applyBoardData(b.controller.nextCommentOrBranch(20))},tooltip:"Previous branch or comment"},"problem-explanation":{click:function(a,b,c,d){a=b.manager;b={widgetType:glift.enums.widgetTypes.GAME_VIEWER,initialPosition:b.controller.initialPosition,sgfString:b.controller.originalSgf(),showVariations:glift.enums.showVariations.ALWAYS,problemConditions:glift.util.simpleClone(b.sgfOptions.problemConditions),icons:["jump-left-arrow",
+tooltip:"Previous branch or comment"},"jump-right-arrow":{click:function(a,b,c,d){b.applyBoardData(b.controller.nextCommentOrBranch(20))},tooltip:"Previous branch or comment"},"problem-explanation":{click:function(a,b,c,d){a=b.manager;b={widgetType:glift.enums.widgetTypes.GAME_VIEWER,initialPosition:glift.rules.treepath.toInitPathString(b.controller.treepath),sgfString:b.controller.originalSgf(),showVariations:glift.enums.showVariations.ALWAYS,problemConditions:glift.util.simpleClone(b.sgfOptions.problemConditions),icons:["jump-left-arrow",
 "jump-right-arrow","arrowleft","arrowright","undo"],rotation:b.sgfOptions.rotation,boardRegion:b.sgfOptions.boardRegion};a.createTemporaryWidget(b)},tooltip:"Explore the solution"},multiopen:{click:function(a,b,c,d){glift.displays.icons.iconSelector(b.wrapperDivId,d.divId,c).setIconEvents("click",function(a,b){var c=d.getIcon("multiopen");c.setActive(b.iconName);d.setCenteredTempIcon("multiopen",c.getActive(),"black")})}},"multiopen-boxonly":{mouseover:function(){},mouseout:function(){},click:function(){},
 tooltip:"Shows if the problem is solved"},"game-info":{click:function(a,b,c,d){b.statusBar&&b.statusBar.gameInfo(b.controller.getGameInfo(),b.controller.getCaptureCount())},tooltip:"Show the game info"},"move-indicator":{click:function(){},mouseover:function(){},mouseout:function(){},tooltip:"Shows the current move number"},fullscreen:{click:function(a,b,c,d){b.statusBar&&b.statusBar.fullscreen()},tooltip:"Expand display to fill entire screen."},unfullscreen:{click:function(a,b,c,d){a.preventDefault&&
 a.preventDefault();a.stopPropagation&&a.stopPropagation();b.statusBar&&b.statusBar.unfullscreen()},tooltip:"Return display original size."},"settings-wrench":{click:function(){},tooltip:"Show Glift Settings"}};glift.api.Options=function(a){a=a||{};this.sgf=a.sgf||void 0;this.sgfDefaults=new glift.api.SgfOptions(a.sgfDefaults);this.divId=a.divId||"glift_display";this.sgfCollection=a.sgfCollection||[];this.sgfMapping=a.sgfMapping||{};this.initialIndex=a.initialIndex||0;this.allowWrapAround=!!a.allowWrapAround||!1;this.loadCollectionInBackground=void 0!==a.loadCollectionInBackground?!!a.loadCollectionInBackground:!0;this.metadata=a.metadata||void 0;this.hooks=new glift.api.HookOptions(a.hooks);this.display=
@@ -369,6 +373,78 @@ b.hooks();b.applyBoardData(a);void 0===b.correctness&&(a.problemResult()===d.COR
 b.totalCorrectAnswers,{fill:"#000",stroke:"#000"}),setTimeout(function(){b.controller.initialize();b.applyBoardData(b.controller.flattenedState())},b.sgfOptions.correctVariationsResetTime)))):a.problemResult()==d.INCORRECT&&(b.iconBar.destroyTempIcons(),b.iconBar.setCenteredTempIcon("multiopen-boxonly","cross","red"),b.iconBar.clearTempText("multiopen-boxonly"),b.correctness=d.INCORRECT,e.problemIncorrect&&e.problemIncorrect()))}},stoneMouseover:void 0,stoneMouseout:void 0};glift.api.widgetopt[glift.enums.widgetTypes.EXAMPLE]={markLastMove:void 0,keyMappings:void 0,enableMousewheel:void 0,problemConditions:{},controllerFunc:glift.controllers.gameViewer,icons:[],showVariations:glift.enums.showVariations.NEVER,statusBarIcons:["fullscreen"],stoneClick:function(a,b,c){},stoneMouseover:function(){},stoneMouseout:function(){}};glift.api.widgetopt[glift.enums.widgetTypes.GAME_VIEWER]={markLastMove:!0,enableMousewheel:!0,keyMappings:{ARROW_LEFT:"iconActions.arrowleft.click",ARROW_RIGHT:"iconActions.arrowright.click",",":"iconActions.arrowleft.click",".":"iconActions.arrowright.click","<":"iconActions.jump-left-arrow.click",">":"iconActions.jump-right-arrow.click","]":function(a){a.controller.moveUpVariations();a.applyBoardData(a.controller.flattenedState())},"[":function(a){a.controller.moveDownVariations();a.applyBoardData(a.controller.flattenedState())}},
 problemConditions:{},controllerFunc:glift.controllers.gameViewer,icons:["jump-left-arrow","jump-right-arrow","arrowleft","arrowright"],showVariations:glift.enums.showVariations.MORE_THAN_ONE,statusBarIcons:["game-info","move-indicator","fullscreen"],stoneClick:function(a,b,c){a=b.controller.getCurrentPlayer();c=b.controller.addStone(c,a);b.applyBoardData(c)},stoneMouseover:void 0,stoneMouseout:void 0};glift.api.widgetopt[glift.enums.widgetTypes.REDUCED_GAME_VIEWER]={markLastMove:void 0,keyMappings:void 0,enableMousewheel:!0,problemConditions:{},controllerFunc:glift.controllers.gameViewer,icons:["arrowleft","arrowright"],showVariations:glift.enums.showVariations.MORE_THAN_ONE,statusBarIcons:["game-info","move-indicator","fullscreen"],stoneClick:function(a,b,c){a=b.controller.getCurrentPlayer();c=b.controller.addStone(c,a);b.applyBoardData(c)},stoneMouseover:void 0,stoneMouseout:void 0};glift.api.widgetopt[glift.enums.widgetTypes.STANDARD_PROBLEM]={markLastMove:void 0,keyMappings:void 0,enableMousewheel:void 0,problemConditions:void 0,controllerFunc:glift.controllers.staticProblem,icons:["undo-problem-move","problem-explanation","multiopen-boxonly"],showVariations:glift.enums.showVariations.NEVER,statusBarIcons:["fullscreen"],stoneClick:function(a,b,c){a=b.hooks();var d=b.controller.getCurrentPlayer(),e=b.controller.addStone(c,d),f=glift.enums.problemResults;e.problemResult()!==
 f.FAILURE&&(b.applyBoardData(e),e.problemResult()===f.CORRECT?(b.iconBar.setCenteredTempIcon("multiopen-boxonly","check","#0CC"),b.correctness=f.CORRECT,a.problemCorrect&&a.problemCorrect(c,d)):e.problemResult()===f.INCORRECT&&(b.iconBar.destroyTempIcons(),b.iconBar.setCenteredTempIcon("multiopen-boxonly","cross","red"),b.correctness=f.INCORRECT,a.problemIncorrect&&a.problemIncorrect(c,d)))},stoneMouseover:void 0,stoneMouseout:void 0};
+</script>
+<script>
+/* Monkeypatch the parser to vary symmetry and color */
+var VARY_COLOR = true;
+var VARY_COORDS = true;
+
+var swap_color = Math.random() >= 0.5;
+
+if (!VARY_COLOR || document.getElementById("tags").textContent.includes("no-color")) {
+    swap_color = false;
+}
+
+if (swap_color || VARY_COORDS) {
+    var color_swaps = [
+        ['AB', 'AW'],
+        ['B', 'W'],
+        ['GB', 'GW']
+    ];
+
+    var oldParser = glift.parse.sgf;
+    glift.parse.sgf = function (sgfString) {
+        var tree = oldParser(sgfString);
+        var top_props = tree.properties();
+
+        if (swap_color) {
+            var player = top_props.remove('PL');
+            if (!player || player[0] === 'B') {
+                top_props.add('PL', 'W');
+            }
+            else {
+                top_props.add('PL', 'B');
+            }
+        }
+
+        var nodes = [tree.rootNode_];
+        while (nodes.length) {
+            var node = nodes.shift();
+            nodes = nodes.concat(node.children);
+
+            var props = node.properties();
+
+            if (swap_color) {
+                for (var i = 0; i < color_swaps.length; ++i) {
+                    var prop1 = color_swaps[i][0];
+                    var prop2 = color_swaps[i][1];
+                    var val1 = props.remove(prop1);
+                    var val2 = props.remove(prop2);
+                    if (val1) {
+                        props.add(prop2, val1);
+                    }
+                    if (val2) {
+                        props.add(prop1, val2);
+                    }
+                }
+
+                var comment = props.remove('C');
+                if (comment) {
+                    var c = comment[0].replace(/(Black|White)/g, function(color) {
+                         return color === 'Black' ? 'White' : 'Black';
+                    }).replace(/(black|white)/g, function(color) {
+                         return color === 'black' ? 'white' : 'black';
+                    }).replace(/(黒|白)/g, function(color) {
+                         return color === '黒' ? '白' : '黒';
+                    });
+                    props.add('C', c);
+                }
+            }
+        }
+
+        return tree;
+    };
+}
 </script>
 <script>
 goog.provide('glift.controllers.JosekiProblem');
