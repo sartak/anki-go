@@ -432,6 +432,8 @@ if (swap_color || VARY_COORDS) {
                          return color === 'Black' ? 'White' : 'Black';
                     }).replace(/(black|white)/g, function(color) {
                          return color === 'black' ? 'white' : 'black';
+                    }).replace(/(黒|白)/g, function(color) {
+                         return color === '黒' ? '白' : '黒';
                     });
                     props.add('C', c);
                 }
