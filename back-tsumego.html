@@ -1,12 +1,10 @@
 <div id="board" style="position: relative; width: 100%; height: 500px" onclick="event.stopPropagation()"  ontouchend="event.stopPropagation()"></div>
-
 <div style="display: none" id="sgf">{{SGF}}</div>
 
 <script>
 // Glift with a one-line hack to fix Anki touch handling on iOS
 // See next <script> tag for loading Glift with the SGF, etc
-
-var ANKI_MISCLICK_XSCALE_FACTOR = 1.015; /* 1.000 */
+var ANKI_MISCLICK_XSCALE_FACTOR = navigator.userAgent.match(/iPad/i) ? 1.015 : 1.000;
 
 /*
  Glift: A Responsive Javascript library for the game Go.
