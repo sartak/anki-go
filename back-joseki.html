@@ -5,9 +5,9 @@
 <div style="display: none" id="tags">{{Tags}}</div>
 
 <script>
-// Glift with a one-line hack to fix Anki touch handling on iOS
+// Glift with a one-line hack to fix Anki touch handling on 12.5" iPad Pro
 // See next <script> tag for loading Glift with the SGF, etc
-var ANKI_MISCLICK_XSCALE_FACTOR = navigator.userAgent.match(/iPad/i) ? 1.015 : 1.000;
+var ANKI_MISCLICK_XSCALE_FACTOR = navigator.userAgent.match(/iPad/i) && (window.innerHeight == 1215 || window.innerHeight == 665) ? 1.015 : 1.000;
 
 /*
  Glift: A Responsive Javascript library for the game Go.
