@@ -653,24 +653,6 @@ play1 = new Audio('_go_play_1.wav');
         CH: []
     }
   },
-  display: {
-    oneColumnSplits : {
-      first: [
-        { component: 'BOARD',       ratio: 0.70 },
-        { component: 'COMMENT_BOX', ratio: 0.20 },
-        { component: 'ICONBAR',     ratio: 0.10 }
-      ]
-    },
-    twoColumnSplits: {
-      first: [
-        { component: 'BOARD', ratio: 1 }
-      ],
-      second: [
-        { component: 'COMMENT_BOX',   ratio: 0.90 },
-        { component: 'ICONBAR',       ratio: 0.10 }
-      ]
-    }
-  },
   iconActions: {
     'undo-problem-move': {
       click:  function(event, widget, icon, iconBar) {
@@ -710,6 +692,22 @@ play1 = new Audio('_go_play_1.wav');
     }
   },
   display: {
+    oneColumnSplits : {
+      first: [
+        { component: 'BOARD',       ratio: 0.70 },
+        { component: 'COMMENT_BOX', ratio: 0.20 },
+        { component: 'ICONBAR',     ratio: 0.10 }
+      ]
+    },
+    twoColumnSplits: {
+      first: [
+        { component: 'BOARD', ratio: 1 }
+      ],
+      second: [
+        { component: 'COMMENT_BOX',   ratio: 0.90 },
+        { component: 'ICONBAR',       ratio: 0.10 }
+      ]
+    },
     theme: "DEPTH",
     goBoardBackground: "_goban.png"
   },
