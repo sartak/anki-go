@@ -378,7 +378,7 @@ var black = {{Black Captured}} + {{Black Prisoners}} + {{Black Territory}};
 var white = {{White Captured}} + {{Komi}} + {{White Prisoners}} + {{White Territory}};
 document.getElementById("result").innerHTML = (white > black ? "W+" + (white - black) : "B+" + (black - white));
 
-glift.create({
+var gliftWidget = glift.create({
   sgf: {
     sgfString: document.getElementById("sgf").textContent,
     widgetType: 'EXAMPLE',
@@ -402,6 +402,10 @@ glift.create({
     goBoardBackground: "_goban.png"
   },
   divId: "board"
+});
+
+window.addEventListener('resize', function(event){
+  gliftWidget && gliftWidget.redraw();
 });
 </script>
 </div>

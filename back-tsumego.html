@@ -536,7 +536,7 @@ if (match) {
     }
 }
 
-glift.create({
+var gliftWidget = glift.create({
   sgf: {
     sgfString: sgf,
 
@@ -606,5 +606,9 @@ play1 = new Audio("_go_play_1.wav");
     goBoardBackground: "_goban.png"
   },
   divId: "board"
+});
+
+window.addEventListener('resize', function(event){
+  gliftWidget && gliftWidget.redraw();
 });
 </script>

@@ -611,7 +611,7 @@ glift.controllers.JosekiProblem.prototype = {
 <script>
 var play1 = new Audio('_go_play_1.wav');
 
-glift.create({
+var gliftWidget = glift.create({
   sgf: {
     sgfString: document.getElementById("sgf").textContent,
 
@@ -714,5 +714,9 @@ play1 = new Audio('_go_play_1.wav');
     goBoardBackground: "_goban.png"
   },
   divId: "board"
+});
+
+window.addEventListener('resize', function(event){
+  gliftWidget && gliftWidget.redraw();
 });
 </script>
